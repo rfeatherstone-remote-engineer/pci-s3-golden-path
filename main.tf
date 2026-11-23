@@ -31,7 +31,9 @@ resource "aws_s3_bucket_public_access_block" "cde_vault" {
 
 resource "aws_s3_bucket_versioning" "cde_vault" {
   bucket = aws_s3_bucket.cde_vault.id
-  versioning_configuration { status = "Enabled" }
+  versioning_configuration {
+    status = "Enabled"
+  }
 }
 
 resource "aws_s3_bucket_object_lock_configuration" "cde_vault" {

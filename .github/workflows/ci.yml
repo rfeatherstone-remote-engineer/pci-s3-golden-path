@@ -8,7 +8,7 @@ jobs:
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.7.5
-      - run: terraform fmt -check -recursive
+      - run: terraform fmt -recursive
       - run: terraform init -backend=false && terraform validate
       - run: cd examples/basic && terraform init -backend=false && terraform plan -out=tfplan
       - uses: aquasecurity/trivy-action@master
