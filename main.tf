@@ -6,8 +6,10 @@ resource "aws_s3_bucket_lifecycle_configuration" "access_logs" {
     status = "Enabled"
     filter {}
     abort_incomplete_multipart_upload { days_after_initiation = 7 }
-    transition { days = 90
-      storage_class = "GLACIER" }
+    transition {
+      days = 90
+      storage_class = "GLACIER"
+    }
     expiration { days = var.retention_days }
   }
 }
@@ -36,16 +38,20 @@ resource "aws_s3_bucket_object_lock_configuration" "cde_vault" {
   bucket     = aws_s3_bucket.cde_vault.id
   depends_on = [aws_s3_bucket_versioning.cde_vault]
   rule {
-    default_retention { mode = "COMPLIANCE"
-      days = var.retention_days }
+    default_retention {
+      mode = "COMPLIANCE"
+      days = var.retention_days
+    }
   }
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "cde_vault" {
   bucket = aws_s3_bucket.cde_vault.id
   rule {
-    apply_server_side_encryption_by_default { kms_master_key_id = aws_kms_key.pci_cmk.arn
-      sse_algorithm = "aws:kms" }
+    apply_server_side_encryption_by_default {
+      kms_master_key_id = aws_kms_key.pci_cmk.arn
+      sse_algorithm = "aws:kms"
+    }
     bucket_key_enabled = true
   }
 }
@@ -57,10 +63,14 @@ resource "aws_s3_bucket_lifecycle_configuration" "cde_vault" {
     status = "Enabled"
     filter {}
     abort_incomplete_multipart_upload { days_after_initiation = 7 }
-    transition { days = 90
-      storage_class = "STANDARD_IA" }
-    transition { days = 365
-      storage_class = "GLACIER" }
+    transition {
+      days = 90
+      storage_class = "STANDARD_IA"
+    }
+    transition {
+      days = 365
+      storage_class = "GLACIER"
+    }
   }
 }
 
