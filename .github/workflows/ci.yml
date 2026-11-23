@@ -1,0 +1,24 @@
+name: PCI-DSS S3 Golden Path CI
+on: [push, pull_request]
+jobs:
+  validate-and-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.7.5
+      - run: terraform fmt -check -recursive
+      - run: terraform init -backend=false && terraform validate
+      - run: cd examples/basic && terraform init -backend=false && terraform plan -out=tfplan
+      - uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: config
+          scan-ref: .
+          exit-code: "1"
+          severity: CRITICAL,HIGH
+      - uses: bridgecrewio/checkov-action@v12
+        with:
+          directory: .
+          framework: terraform
+      - run: sha256sum *.tf examples/basic/*.tf > SHA256SUMS
